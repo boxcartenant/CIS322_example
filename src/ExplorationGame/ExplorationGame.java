@@ -63,10 +63,12 @@ public class ExplorationGame extends JPanel {
         return new Rectangle();
     }
 
+    @Override
     protected void paintComponent(Graphics g)
     {
-        //this function puts all the graphics on the display
-        //when swing decides to repaint, it will call this overridden function, and consequently paint all our stuff.
+        //this function puts all the graphics on the display.
+        // it overrides a function in the swing library.
+        // when swing decides to repaint, it will call this overridden function, and consequently paint all our stuff.
         
         //set up the canvas
         //draw the world edge lines
