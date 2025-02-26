@@ -5,14 +5,14 @@ import java.awt.*;
 
 public class ExplorationGame extends JPanel {
     // Game Constants
-    static final int TILE_SIZE = 32;
-    private static final int VIEW_WIDTH = 800;
+    static final int TILE_SIZE = 32; // for the background and unit size
+    private static final int VIEW_WIDTH = 800; // size of our view window
     private static final int VIEW_HEIGHT = 600;
-    protected static final int WORLD_WIDTH = 2000;
+    protected static final int WORLD_WIDTH = 2000; // size of the world
     protected static final int WORLD_HEIGHT = 2000;
-    private long lastDamageTime = 0;
-    private static final long DAMAGE_COOLDOWN = 500;
-    private boolean gameOver = false;
+    private long lastDamageTime = 0; // last time player was hit
+    private static final long DAMAGE_COOLDOWN = 500; //how often player can be hit
+    private boolean gameOver = false; //when the user dies, the game ends
 
     protected enum Direction {UP, DOWN, LEFT, RIGHT}
 
