@@ -51,16 +51,20 @@ public class Base7Clock extends JFrame {
             double cycles = base7Time[0]; // Larger unit
             double phases = base7Time[1];
             double spans = base7Time[2];
-            double ticks = base7Time[3];  // Smallest unit
+            double ticks = base7Time[3];
+            double mites = base7Time[4];
+            double beats = base7Time[5];// Smallest unit
 
             // Draw tick marks
             drawTickMarks(g2d, centerX, centerY);
 
             // Draw clock hands
             drawHand(g2d, centerX, centerY, cycles, 7, 0.5, Color.RED);    // Cycles hand
-            drawHand(g2d, centerX, centerY, phases, 7, 0.7, Color.BLUE);   // Phases hand
-            drawHand(g2d, centerX, centerY, spans, 7, 0.85, Color.GREEN);  // Spans hand
-            drawHand(g2d, centerX, centerY, ticks, 7, 0.95, Color.BLACK);  // Ticks hand
+            drawHand(g2d, centerX, centerY, phases, 7, 0.575, Color.BLUE);   // Phases hand
+            drawHand(g2d, centerX, centerY, spans, 7, 0.65, Color.GREEN);  // Spans hand
+            drawHand(g2d, centerX, centerY, ticks, 7, 0.725, Color.MAGENTA);  // Ticks hand
+            drawHand(g2d, centerX, centerY, mites, 7, 0.80, Color.GRAY);  // Mites hand
+            drawHand(g2d, centerX, centerY, beats, 7, 0.875, Color.BLACK);  // Beats hand
 
             // Draw base-7 date below the clock
             drawDate(g2d, centerX, centerY + CLOCK_SIZE / 2 + 20);
@@ -74,6 +78,16 @@ public class Base7Clock extends JFrame {
                 int x2 = (int) (centerX + Math.cos(angle) * (CLOCK_SIZE / 2 - TICK_LENGTH));
                 int y2 = (int) (centerY + Math.sin(angle) * (CLOCK_SIZE / 2 - TICK_LENGTH));
                 g2d.drawLine(x1, y1, x2, y2);
+            }
+            for (int i = 0; i < 49; i++) {
+                if (i % 7 != 0) {
+                    double angle = Math.toRadians((i * 360.0 / 49) - 90);
+                    int x1 = (int) (centerX + Math.cos(angle) * (CLOCK_SIZE / 2));
+                    int y1 = (int) (centerY + Math.sin(angle) * (CLOCK_SIZE / 2));
+                    int x2 = (int) (centerX + Math.cos(angle) * (CLOCK_SIZE / 2 - TICK_LENGTH / 2));
+                    int y2 = (int) (centerY + Math.sin(angle) * (CLOCK_SIZE / 2 - TICK_LENGTH / 2));
+                    g2d.drawLine(x1, y1, x2, y2);
+                }
             }
         }
 
@@ -114,24 +128,30 @@ public class Base7Clock extends JFrame {
                     cal.get(Calendar.SECOND)) * 1000L +
                     cal.get(Calendar.MILLISECOND);
             double fractionOfDay = (double) millisToday / (24 * 60 * 60 * 1000);
-            double base7Ticks = fractionOfDay * 2401; // 7^4 = 2401 ticks per day
+            double base7Ticks = fractionOfDay * 117649; // 7^5 = 16807 ticks per day
 
-            double cycles = base7Ticks / (7 * 7 * 7);   // 343 ticks per cycle
-            double phases = (base7Ticks / (7 * 7)) % 7;  // 49 ticks per phase
-            double spans = (base7Ticks / 7) % 7;         // 7 ticks per span
-            double ticks = base7Ticks % 7;               // 1 tick
+            double cycles = base7Ticks / (7 * 7 * 7 * 7 * 7);    // 343 ticks per cycle
+            double phases = (base7Ticks / (7 * 7 * 7 * 7)) % 7;  // 49 ticks per phase
+            double spans = (base7Ticks / (7 * 7 * 7)) % 7;       // 7 ticks per span
+            double ticks = (base7Ticks / (7 * 7)) % 7;           // 7 mites per tick
+            double mites = (base7Ticks / 7) % 7;                 // 7 beats per mite
+            double beats = base7Ticks % 7;                       // 1 beat
 
             // Include fractional parts for smooth hand movement
             double cycleFraction = cycles - Math.floor(cycles);
             double phaseFraction = phases - Math.floor(phases);
             double spanFraction = spans - Math.floor(spans);
             double tickFraction = ticks - Math.floor(ticks);
+            double miteFraction = mites - Math.floor(mites);
+            double beatFraction = beats - Math.floor(beats);
 
             return new double[]{
                     Math.floor(cycles) + cycleFraction,
                     Math.floor(phases) + phaseFraction,
                     Math.floor(spans) + spanFraction,
-                    Math.floor(ticks) + tickFraction
+                    Math.floor(ticks) + tickFraction,
+                    Math.floor(mites) + miteFraction,
+                    Math.floor(beats)
             };
         }
 
@@ -143,7 +163,7 @@ public class Base7Clock extends JFrame {
             int dayOfYear = (int) (daysSinceEpoch % 343);
             int month = dayOfYear / 49;        // 49 days per month
             int week = (dayOfYear % 49) / 7;   // 7 days per week
-            int day = dayOfYear % 7;           // Day within the week
+            int day = 5 + (dayOfYear % 7);     // Day within the week + 5 because the epoch was thursday
 
             return new int[]{month, week, day};
         }
