@@ -53,18 +53,18 @@ public class Base7Clock extends JFrame {
             double spans = base7Time[2];
             double ticks = base7Time[3];
             double mites = base7Time[4];
-            double beats = base7Time[5];// Smallest unit
+            //double beats = base7Time[5];// Smallest unit
 
             // Draw tick marks
             drawTickMarks(g2d, centerX, centerY);
 
             // Draw clock hands
             drawHand(g2d, centerX, centerY, cycles, 7, 0.5, Color.RED);    // Cycles hand
-            drawHand(g2d, centerX, centerY, phases, 7, 0.575, Color.BLUE);   // Phases hand
+            drawHand(g2d, centerX, centerY, phases, 7, 0.575, Color.ORANGE);   // Phases hand
             drawHand(g2d, centerX, centerY, spans, 7, 0.65, Color.GREEN);  // Spans hand
-            drawHand(g2d, centerX, centerY, ticks, 7, 0.725, Color.MAGENTA);  // Ticks hand
+            drawHand(g2d, centerX, centerY, ticks, 7, 0.725, Color.BLUE);  // Ticks hand
             drawHand(g2d, centerX, centerY, mites, 7, 0.80, Color.GRAY);  // Mites hand
-            drawHand(g2d, centerX, centerY, beats, 7, 0.875, Color.BLACK);  // Beats hand
+            //drawHand(g2d, centerX, centerY, beats, 7, 0.875, Color.BLACK);  // Beats hand
 
             // Draw base-7 date below the clock
             drawDate(g2d, centerX, centerY + CLOCK_SIZE / 2 + 20);
@@ -128,30 +128,33 @@ public class Base7Clock extends JFrame {
                     cal.get(Calendar.SECOND)) * 1000L +
                     cal.get(Calendar.MILLISECOND);
             double fractionOfDay = (double) millisToday / (24 * 60 * 60 * 1000);
-            double base7Ticks = fractionOfDay * 117649; // 7^5 = 16807 ticks per day
+            double base7Ticks = fractionOfDay * 16807; // 7^6 = 117649 ticks per day
 
-            double cycles = base7Ticks / (7 * 7 * 7 * 7 * 7);    // 343 ticks per cycle
-            double phases = (base7Ticks / (7 * 7 * 7 * 7)) % 7;  // 49 ticks per phase
-            double spans = (base7Ticks / (7 * 7 * 7)) % 7;       // 7 ticks per span
-            double ticks = (base7Ticks / (7 * 7)) % 7;           // 7 mites per tick
-            double mites = (base7Ticks / 7) % 7;                 // 7 beats per mite
-            double beats = base7Ticks % 7;                       // 1 beat
+            //the comments tell the time it takes for each of these hands to move to the next major tickmark
+            //so the cycles hand will move all the way around one time each day
+            double cycles = base7Ticks / (7 * 7 * 7 * 7);    // 7 cycles per day (~3.4 hr each)
+            double phases = (base7Ticks / (7 * 7 * 7)) % 7;  // 7 phases per cycle (~29 min each)
+            double spans = (base7Ticks / (7 * 7)) % 7;       // 7 spans per phase (~4 min each)
+            double ticks = (base7Ticks / 7) % 7;             // 7 ticks per span (~36s each)
+            double mites = base7Ticks % 7;                   // 7 mites per tick (~5s each)
+            // (at 49 minor tickmarks per major, mites move a little slower than 2x the second hand on a clock)
+            //double beats = base7Ticks % 7; // this hand moved too fast so I reduced the denominator and cut it.
 
             // Include fractional parts for smooth hand movement
             double cycleFraction = cycles - Math.floor(cycles);
             double phaseFraction = phases - Math.floor(phases);
             double spanFraction = spans - Math.floor(spans);
             double tickFraction = ticks - Math.floor(ticks);
-            double miteFraction = mites - Math.floor(mites);
-            double beatFraction = beats - Math.floor(beats);
+            double miteFraction = Math.floor((mites - Math.floor(mites))*7)/7; //snap to minor ticks
+            //double beatFraction = beats - Math.floor(beats);
 
             return new double[]{
                     Math.floor(cycles) + cycleFraction,
                     Math.floor(phases) + phaseFraction,
                     Math.floor(spans) + spanFraction,
                     Math.floor(ticks) + tickFraction,
-                    Math.floor(mites) + miteFraction,
-                    Math.floor(beats)
+                    Math.floor(mites) + miteFraction//,
+                    //        Math.floor(beats)
             };
         }
 
