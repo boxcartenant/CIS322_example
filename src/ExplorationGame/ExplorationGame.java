@@ -2,6 +2,8 @@ package ExplorationGame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class ExplorationGame extends JPanel {
     // Game Constants
@@ -22,10 +24,24 @@ public class ExplorationGame extends JPanel {
     private boolean movePressed = false;
     private Direction moveDirection;
 
+    private ArrayList<Actor> enemies;
+    private ArrayList<HPItem> items;
+    private Random random = new Random();
+    private ArrayList<Actor> playerUnits;
+    private Actor activeUnit;
+
     public ExplorationGame()
     {
+        setPreferredSize(new Dimension(VIEW_WIDTH,VIEW_HEIGHT));
+        setFocusable(true);
+
         // make the player and enemy objects
+        enemies = new ArrayList<>();
+        items = new ArrayList<>();
+
         // call spawnInitialObjects
+        spawnInitialObjects();
+
         // set up the keylistener to get button presses and call our controlling functions (switchActiveUnit, move, etc)
         // set a timer to periodically run our updateGame() function, then request for swing to repaint.
 
