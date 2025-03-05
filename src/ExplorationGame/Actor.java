@@ -11,9 +11,9 @@ public abstract class Actor {
     //making it abstract enables me to use it as a reference to objects of any class-type that extends it.
     //also, since it's abstract, every class-type that extends it must implement its abstract methods.
     
-    protected int x,y,hp,maxHP,speed;
-    private Color color;
-    protected Direction lastDirection;
+    public int x,y,hp,maxHP,speed;
+    public Color color;
+    public Direction lastDirection;
 
     public Actor(int x, int y, int maxHP, int speed, Color color)
     {
@@ -25,7 +25,6 @@ public abstract class Actor {
         this.hp = maxHP;
         this.lastDirection = Direction.UP;
     }
-//    ADD GETTERS AND SETTERS FOR ALL THE STUFF IN HERE
     
     public void move(Direction moveDir)
     {
