@@ -162,11 +162,15 @@ public class Base7Clock extends JFrame {
             long millisSinceEpoch = System.currentTimeMillis();
             long daysSinceEpoch = millisSinceEpoch / (1000 * 60 * 60 * 24);
 
+            // Reference: March 27, 1970 (approx. day 86 since epoch, as Jan 1 to Mar 27 = 31 + 28 + 27 = 86 days)
+            long referenceDays = 86; // Days from Jan 1, 1970 to March 27, 1970
+            long daysSinceReference = daysSinceEpoch - referenceDays;
+
             // Base-7 year has 343 days (7 months * 7 weeks * 7 days)
-            int dayOfYear = (int) (daysSinceEpoch % 343);
+            int dayOfYear = (int) (daysSinceReference % 343);
             int month = dayOfYear / 49;        // 49 days per month
             int week = (dayOfYear % 49) / 7;   // 7 days per week
-            int day = 5 + (dayOfYear % 7);     // Day within the week + 5 because the epoch was thursday
+            int day = (dayOfYear % 7);     // Day within the week + 5 because the epoch was thursday
 
             return new int[]{month, week, day};
         }
