@@ -2,6 +2,8 @@ package ExplorationGame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -42,12 +44,65 @@ public class ExplorationGame extends JPanel {
         // call spawnInitialObjects
         spawnInitialObjects();
 
-        // set up the keylistener to get button presses and call our controlling functions (switchActiveUnit, move, etc)
-        // set a timer to periodically run our updateGame() function, then request for swing to repaint.
+        //player
+        playerUnits = new ArrayList<>();
+        playerUnits.add(new Knight(WORLD_WIDTH/2, WORLD_HEIGHT/2, 100, 5, new Color(180, 100, 60, 255)));
 
-        // that timer will function as the "game loop". 
-        // We're putting that in the constructor so that it will start working 
-        // as soon as it's added to the JFrame in main. This line: frame.add(new ExplorationGame());
+        // add key listener
+        addKeyListener(new KeyAdapter() {
+                           @Override
+                           public void keyPressed(KeyEvent e) {
+                               switch (e.getKeyCode()) {
+                                   case KeyEvent.VK_UP:
+                                       movePressed = true;
+                                       moveDirection = Direction.UP;
+                                       break;
+                                   case KeyEvent.VK_DOWN:
+                                       movePressed = true;
+                                       moveDirection = Direction.DOWN;
+                                       break;
+                                   case KeyEvent.VK_LEFT:
+                                       movePressed = true;
+                                       moveDirection = Direction.LEFT;
+                                       break;
+                                   case KeyEvent.VK_RIGHT:
+                                       movePressed = true;
+                                       moveDirection = Direction.RIGHT;
+                                       break;
+                                   case KeyEvent.VK_SPACE:
+                                       activeUnit.attack(enemies);
+                                       break;
+                                   case KeyEvent.VK_SHIFT:
+                                       switchActiveUnit();
+                                       break;
+                               }
+                           }
+
+                           @Override
+                           public void keyReleased(KeyEvent e) {
+                               switch (e.getKeyCode()) {
+                                   case KeyEvent.VK_UP:
+                                       movePressed = false;
+                                       break;
+                                   case KeyEvent.VK_DOWN:
+                                       movePressed = false;
+                                       break;
+                                   case KeyEvent.VK_LEFT:
+                                       movePressed = false;
+                                       break;
+                                   case KeyEvent.VK_RIGHT:
+                                       movePressed = false;
+                                       break;
+                               }
+                           }
+                       }
+        );
+
+        //Game Loop
+        Timer timer = new Timer(16, e -> {
+            updateGame();
+            repaint();
+        });
     }
 
     private void spawnInitialObjects()
@@ -65,18 +120,27 @@ public class ExplorationGame extends JPanel {
     {
         //update visibility by moving the view window on the world
         // this will include calls to getViewBounds.
+        Rectangle viewBounds = getViewBounds();
+        long currentTime = System.currentTimeMillis();
 
         // for each enemy, update the enemies
 
         //update HP items
 
         //update player stuff
+        if (movePressed)
+        {
+            activeUnit.move(moveDirection);
+        }
+        //check if the player died here
     }
 
     private Rectangle getViewBounds()
     {
         //return a view boundary centered on the active unit
-        return new Rectangle();
+        int viewX = activeUnit.x - VIEW_WIDTH/2;
+        int viewY = activeUnit.y - VIEW_HEIGHT/2;
+        return new Rectangle(viewX, viewY, VIEW_WIDTH,VIEW_HEIGHT);
     }
 
     @Override
@@ -87,10 +151,27 @@ public class ExplorationGame extends JPanel {
         // when swing decides to repaint, it will call this overridden function, and consequently paint all our stuff.
         
         //set up the canvas
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        Rectangle viewBounds = getViewBounds();
+        //draw background grid
+        g2d.setColor(Color.GREEN.darker());
+        int startX = viewBounds.x - (viewBounds.x % TILE_SIZE);
+        int startY = viewBounds.y - (viewBounds.y % TILE_SIZE);
+        for (int x = startX; x < viewBounds.x + VIEW_WIDTH; x += TILE_SIZE){
+            for (int y = startY; y < viewBounds.y + VIEW_HEIGHT; y += TILE_SIZE){
+                g2d.drawRect(x - viewBounds.x, y - viewBounds.y, TILE_SIZE, TILE_SIZE);
+            }
+        }
         //draw the world edge lines
         //draw HP items if visible
         //draw enemies if visible
         // draw the player
+        for(Actor unit : playerUnits)
+        {
+            g2d.setColor(unit.color);
+            g2d.fillRect(unit.x - viewBounds.x, unit.y - viewBounds.y, TILE_SIZE, TILE_SIZE);
+        }
         //draw attacks
         //draw HP bar
         //if gameover, then draw gameover text

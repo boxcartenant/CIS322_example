@@ -5,6 +5,8 @@ import ExplorationGame.ExplorationGame.Direction;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static ExplorationGame.ExplorationGame.*;
+
 public abstract class Actor {
 
     //this class will contain the movement and HP effects for our player characters and enemies
@@ -28,6 +30,24 @@ public abstract class Actor {
     
     public void move(Direction moveDir)
     {
+        switch (moveDir) {
+            case Direction.UP:
+                y = Math.max(0, y - speed);
+                lastDirection = Direction.UP;
+                break;
+            case Direction.DOWN:
+                y = Math.min(WORLD_HEIGHT - TILE_SIZE, y + speed);
+                lastDirection = Direction.DOWN;
+                break;
+            case Direction.LEFT:
+                y = Math.max(0, x - speed);
+                lastDirection = Direction.LEFT;
+                break;
+            case Direction.RIGHT:
+                y = Math.min(WORLD_WIDTH - TILE_SIZE, x + speed);
+                lastDirection = Direction.RIGHT;
+                break;
+        }
         //move in the direction indicated by moveDir
         // at a rate determined by speed
         // and set last_direction equal to moveDir
