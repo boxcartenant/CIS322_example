@@ -143,15 +143,42 @@ public class ExplorationGame extends JPanel {
         long currentTime = System.currentTimeMillis();
 
         // for each enemy, update the enemies
+        for (Actor enemy : enemies) {
+            if (((Enemy)enemy).getVisibile(viewBounds)) {
+                ((Enemy)enemy).move(activeUnit);
+                if (currentTime - lastDamageTime >= DAMAGE_COOLDOWN)
+                {
+                    enemy.attack(playerUnits);
+                    lastDamageTime = currentTime;
+                }
+            }
+        }
 
         //update HP items
-
+        for (HPItem item : items) {
+            item.visible = viewBounds.contains(item.x, item.y);
+            if (item.visible && viewBounds.contains(activeUnit.x, activeUnit.y)) {
+                if (Math.abs(item.x - activeUnit.x) < TILE_SIZE &&
+                        Math.abs(item.y - activeUnit.y) < TILE_SIZE) {
+                    activeUnit.changeHP(20);
+                    items.remove(item);
+                    break;
+                }
+            }
+        }
         //update player stuff
         if (movePressed)
         {
             activeUnit.move(moveDirection);
         }
         //check if the player died here
+        for (Actor unit : playerUnits) {
+            if (unit.hp <= 0) {
+                gameOver = true;
+                break;
+            }
+        }
+
     }
 
     private Rectangle getViewBounds()
@@ -184,7 +211,21 @@ public class ExplorationGame extends JPanel {
         }
         //draw the world edge lines
         //draw HP items if visible
+        g2d.setColor(Color.BLUE);
+        for (HPItem item : items) {
+            if (item.visible) {
+                g2d.fillRect(item.x - viewBounds.x, item.y - viewBounds.y,
+                        TILE_SIZE/2, TILE_SIZE/2);
+            }
+        }
         //draw enemies if visible
+        for (Actor enemy : enemies) {
+            g2d.setColor(enemy.color);
+            if (((Enemy)enemy).visible) {
+                g2d.fillRect(enemy.x - viewBounds.x, enemy.y - viewBounds.y,
+                        TILE_SIZE, TILE_SIZE);
+            }
+        }
         // draw the player
         for(Actor unit : playerUnits)
         {
@@ -192,7 +233,30 @@ public class ExplorationGame extends JPanel {
             g2d.fillRect(unit.x - viewBounds.x, unit.y - viewBounds.y, TILE_SIZE, TILE_SIZE);
         }
         //draw attacks
+        if (activeUnit.isAttacking()) {
+            g2d.setColor(new Color(100,0,255,100));
+            Rectangle attackArea = activeUnit.getAttackArea();
+            g2d.fillRect(attackArea.x -viewBounds.x, attackArea.y - viewBounds.y,
+                    attackArea.width, attackArea.height);
+        }
         //draw HP bar
+        g2d.setColor(Color.BLACK);
+        g2d.fillRect(10,10,102,22);
+        g2d.setColor(Color.RED);
+        g2d.fillRect(11, 11, activeUnit.hp, 20);
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("HP: " + activeUnit.hp + "/" + activeUnit.maxHP, 15,25);
         //if gameover, then draw gameover text
+        if (gameOver) {
+            g2d.setColor(Color.BLACK);
+            g2d.setFont(new Font("Arial", Font.BOLD, 52));
+            String loseText = "GAME OVER";
+            FontMetrics fm = g2d.getFontMetrics();
+            int textWidth = fm.stringWidth(loseText);
+            int textHeight = fm.getHeight();
+            int x = (VIEW_WIDTH - textWidth) /2;
+            int y = (VIEW_HEIGHT - textHeight) /2;
+            g2d.drawString(loseText, x, y);
+        }
     }
 }

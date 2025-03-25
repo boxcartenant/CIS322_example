@@ -22,7 +22,7 @@ public class Enemy extends Actor{
     }
     //getters and setters
     public void setVisible(boolean visible){this.visible = visible;}
-    public boolean getVisibile(){return this.visible;}
+    public boolean getVisibile(Rectangle viewBounds){return this.visible;}
     //we're just going to have a getter for the whole position and size of the enemy
     //rectangles are useful, so returning that type will help us later.
     Rectangle getBounds(){return new Rectangle(x,y,TILE_SIZE,TILE_SIZE);}
