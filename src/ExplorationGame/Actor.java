@@ -40,11 +40,11 @@ public abstract class Actor {
                 lastDirection = Direction.DOWN;
                 break;
             case Direction.LEFT:
-                y = Math.max(0, x - speed);
+                x = Math.max(0, x - speed);
                 lastDirection = Direction.LEFT;
                 break;
             case Direction.RIGHT:
-                y = Math.min(WORLD_WIDTH - TILE_SIZE, x + speed);
+                x = Math.min(WORLD_WIDTH - TILE_SIZE, x + speed);
                 lastDirection = Direction.RIGHT;
                 break;
         }

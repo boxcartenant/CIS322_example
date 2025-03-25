@@ -47,62 +47,64 @@ public class ExplorationGame extends JPanel {
         //player
         playerUnits = new ArrayList<>();
         playerUnits.add(new Knight(WORLD_WIDTH/2, WORLD_HEIGHT/2, 100, 5, new Color(180, 100, 60, 255)));
+        activeUnit = playerUnits.get(0);
 
         // add key listener
         addKeyListener(new KeyAdapter() {
-                           @Override
-                           public void keyPressed(KeyEvent e) {
-                               switch (e.getKeyCode()) {
-                                   case KeyEvent.VK_UP:
-                                       movePressed = true;
-                                       moveDirection = Direction.UP;
-                                       break;
-                                   case KeyEvent.VK_DOWN:
-                                       movePressed = true;
-                                       moveDirection = Direction.DOWN;
-                                       break;
-                                   case KeyEvent.VK_LEFT:
-                                       movePressed = true;
-                                       moveDirection = Direction.LEFT;
-                                       break;
-                                   case KeyEvent.VK_RIGHT:
-                                       movePressed = true;
-                                       moveDirection = Direction.RIGHT;
-                                       break;
-                                   case KeyEvent.VK_SPACE:
-                                       activeUnit.attack(enemies);
-                                       break;
-                                   case KeyEvent.VK_SHIFT:
-                                       switchActiveUnit();
-                                       break;
-                               }
-                           }
+           @Override
+           public void keyPressed(KeyEvent e) {
+               switch (e.getKeyCode()) {
+                   case KeyEvent.VK_UP:
+                       movePressed = true;
+                       moveDirection = Direction.UP;
+                       break;
+                   case KeyEvent.VK_DOWN:
+                       movePressed = true;
+                       moveDirection = Direction.DOWN;
+                       break;
+                   case KeyEvent.VK_LEFT:
+                       movePressed = true;
+                       moveDirection = Direction.LEFT;
+                       break;
+                   case KeyEvent.VK_RIGHT:
+                       movePressed = true;
+                       moveDirection = Direction.RIGHT;
+                       break;
+                   case KeyEvent.VK_SPACE:
+                       activeUnit.attack(enemies);
+                       break;
+                   case KeyEvent.VK_SHIFT:
+                       switchActiveUnit();
+                       break;
+               }
+           }
 
-                           @Override
-                           public void keyReleased(KeyEvent e) {
-                               switch (e.getKeyCode()) {
-                                   case KeyEvent.VK_UP:
-                                       movePressed = false;
-                                       break;
-                                   case KeyEvent.VK_DOWN:
-                                       movePressed = false;
-                                       break;
-                                   case KeyEvent.VK_LEFT:
-                                       movePressed = false;
-                                       break;
-                                   case KeyEvent.VK_RIGHT:
-                                       movePressed = false;
-                                       break;
-                               }
-                           }
-                       }
-        );
+           @Override
+           public void keyReleased(KeyEvent e) {
+               switch (e.getKeyCode()) {
+                   case KeyEvent.VK_UP:
+                       movePressed = false;
+                       break;
+                   case KeyEvent.VK_DOWN:
+                       movePressed = false;
+                       break;
+                   case KeyEvent.VK_LEFT:
+                       movePressed = false;
+                       break;
+                   case KeyEvent.VK_RIGHT:
+                       movePressed = false;
+                       break;
+               }
+           }
+       }
+       );
 
         //Game Loop
         Timer timer = new Timer(16, e -> {
             updateGame();
             repaint();
         });
+        timer.start();
     }
 
     private void spawnInitialObjects()
