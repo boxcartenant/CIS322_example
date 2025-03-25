@@ -47,6 +47,8 @@ public class ExplorationGame extends JPanel {
         //player
         playerUnits = new ArrayList<>();
         playerUnits.add(new Knight(WORLD_WIDTH/2, WORLD_HEIGHT/2, 100, 5, new Color(180, 100, 60, 255)));
+        playerUnits.add(new Knight(WORLD_WIDTH/2, WORLD_HEIGHT/2 + TILE_SIZE*2, 100, 5, new Color(0,30,105, 255)));
+        playerUnits.add(new Knight(WORLD_WIDTH/2 + TILE_SIZE*2, WORLD_HEIGHT/2, 100, 5, new Color(30,150,20, 255)));
         activeUnit = playerUnits.get(0);
 
         // add key listener
@@ -110,12 +112,27 @@ public class ExplorationGame extends JPanel {
     private void spawnInitialObjects()
     {
         //spawn enemies
+        for (int i = 0; i < 20; i++) {
+            enemies.add(new Enemy(
+                    random.nextInt(WORLD_WIDTH),
+                    random.nextInt(WORLD_HEIGHT)
+            ));
+        }
         //spawn HP items
+        for (int i = 0; i < 10; i++) {
+            items.add(new HPItem(
+                    random.nextInt(WORLD_WIDTH),
+                    random.nextInt(WORLD_HEIGHT)
+            ));
+        }
     }
 
     private void switchActiveUnit()
     {
         //change which unit the player is controlling
+        int currentIndex = playerUnits.indexOf(activeUnit);
+        int nextIndex = (currentIndex +1) % playerUnits.size();
+        activeUnit = playerUnits.get(nextIndex);
     }
 
     private void updateGame()
