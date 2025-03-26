@@ -55,6 +55,14 @@ public abstract class Actor {
 
     public void changeHP(int change)
     {
+        hp += change;
+        if (hp <0) {
+            hp = 0;
+        }
+        if (hp > maxHP)
+        {
+            hp = maxHP;
+        }
         //add change to HP, and then make sure it's between 0-max
     }
 
