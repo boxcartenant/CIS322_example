@@ -3,7 +3,7 @@ package ExplorationGame;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static ExplorationGame.ExplorationGame.TILE_SIZE;
+import static ExplorationGame.ExplorationGame.*;
 
 // All the enemies in the game will be objects of this class type.
 public class Enemy extends Actor{
@@ -22,7 +22,9 @@ public class Enemy extends Actor{
     }
     //getters and setters
     public void setVisible(boolean visible){this.visible = visible;}
-    public boolean getVisibile(Rectangle viewBounds){return this.visible;}
+    public boolean getVisibile(Rectangle viewBounds){
+        visible = viewBounds.contains(x,y);
+        return this.visible;}
     //we're just going to have a getter for the whole position and size of the enemy
     //rectangles are useful, so returning that type will help us later.
     Rectangle getBounds(){return new Rectangle(x,y,TILE_SIZE,TILE_SIZE);}
@@ -35,6 +37,17 @@ public class Enemy extends Actor{
         //compare location of self and activeUnit
         //pick a new location "speed" distance toward activeUnit
         //update x,y
+        int dx = activeUnit.x - x;
+        int dy = activeUnit.y - y;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance > 0) {
+            int moveX = (int) (speed * dx / distance);
+            int moveY = (int) (speed * dy / distance);
+            x += moveX;
+            y += moveY;
+            x = Math.max(0, Math.min(WORLD_WIDTH - TILE_SIZE, x));
+            y = Math.max(0, Math.min(WORLD_HEIGHT - TILE_SIZE, y));
+        }
     }
 
     //this Override flag is optional, but it's helpful for the programmer and sometimes the IDE to know
@@ -44,6 +57,14 @@ public class Enemy extends Actor{
     @Override
     public void attack(ArrayList<Actor> enemies) {
         //under whatever circumstances, damage the player
+        for (Actor enemy : enemies)
+        {
+            Rectangle enemyBounds = new Rectangle(x,y,TILE_SIZE,TILE_SIZE);
+            Rectangle playerBounds = new Rectangle(enemy.x, enemy.y, TILE_SIZE, TILE_SIZE);
+            if (enemyBounds.intersects(playerBounds)) {
+                enemy.changeHP(0-attackDamage);
+            }
+        }
     }
     @Override
     public Rectangle getAttackArea() {
