@@ -18,12 +18,22 @@ public class Knight extends Actor {
 
     @Override
     public Rectangle getAttackArea() {
+        switch (lastDirection) {
+            case UP:
+                return new Rectangle(x, y - attackRange, attackWidth, attackRange);
+            case DOWN:
+                return new Rectangle(x, y + attackRange, attackWidth, attackRange);
+            case LEFT:
+                return new Rectangle(x - attackRange, y, attackRange, attackWidth);
+            case RIGHT:
+                return new Rectangle(x + TILE_SIZE, y, attackRange, attackWidth);
+        }
         return null;
     }
 
     @Override
     public boolean isAttacking() {
-        return false;
+        return attacking;
     }
 
     @Override
@@ -45,9 +55,19 @@ public class Knight extends Actor {
                 }
             }
         }
+
+        Timer attackTimer = new Timer(200, e -> attacking = false);
+        attackTimer.setRepeats(false);
+        attackTimer.start();
     }
 
     private boolean isEnemyHit(Actor enemy, Rectangle attackArea) {
+        Rectangle enemyBounds = ((Enemy)enemy).getBounds();
+        if ((enemyBounds.x + enemyBounds.width <= attackArea.x) || (attackArea.x + attackArea.width <= enemyBounds.x)
+        || (enemyBounds.y + enemyBounds.height <= attackArea.y) || (attackArea.y + attackArea.height <= enemyBounds.y))
+        {
+            return false;
+        }
         return true;
     }
 
